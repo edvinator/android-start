@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity
 
         final DatabaseReference userRef = mFirebaseDatabaseReference.child("users").child(mUserID);
         //userRef.removeValue();
-        DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child("messages");
+        DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages");
 
         //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
 

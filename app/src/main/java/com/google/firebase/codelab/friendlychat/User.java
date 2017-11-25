@@ -5,19 +5,18 @@ package com.google.firebase.codelab.friendlychat;
  */
 public class User
 {
-    private String userid;
+    private String id;
     public  User() {
-
     }
     public User(String userid){
-        this.userid = userid;
+        this.id = id;
     }
 
     public String getId() {
-        return userid;
+        return id;
     }
-    public void setId(String chatid) {
-        this.userid = userid;
+    public void setId(String id) {
+        this.id = id;
     }
 
 }
