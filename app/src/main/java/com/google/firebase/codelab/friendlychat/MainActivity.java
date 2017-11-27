@@ -205,7 +205,8 @@ public class MainActivity extends AppCompatActivity
 
         final DatabaseReference userRef = mFirebaseDatabaseReference.child("users").child(mUserID);
         //userRef.removeValue();
-        DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages");
+            //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
+        final DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages");
 
         //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
 
@@ -331,8 +332,9 @@ public class MainActivity extends AppCompatActivity
                         mUsername,
                         mPhotoUrl,
                         null /* no image */);
-                mFirebaseDatabaseReference.child("chats").child("messages")
-                        .push().setValue(friendlyMessage);
+                messagesRef.push().setValue(friendlyMessage);
+                //mFirebaseDatabaseReference.child("chats").child("messages")
+                //        .push().setValue(friendlyMessage);
                 mMessageEditText.setText("");
                 userRef.removeValue();
             }

@@ -26,7 +26,7 @@ public class afterlogin extends AppCompatActivity {
     private DatabaseReference mFirebaseDatabaseReference;
     private String mUserID; //unique ID for this user
     private String MyChatpartnerID = "";
-
+    private boolean mLast = true;
 
 
     @Override
@@ -41,12 +41,12 @@ public class afterlogin extends AppCompatActivity {
 
         mFirebaseDatabaseReference = FirebaseDatabase.getInstance().getReference();
         mUserID = mFirebaseUser.getUid();
-        mFirebaseDatabaseReference.child("users").child(mUserID).setValue(mUserID);
+        mFirebaseDatabaseReference.child("users").child(mUserID).setValue(mUserID); // skapar en gren i databasem som heter user
         //final DatabaseReference userRef = mFirebaseDatabaseReference.child("users").child(mUserID);
         final DatabaseReference searchingref = mFirebaseDatabaseReference.child("searching");
         final DatabaseReference reftomyIDwhensearching = mFirebaseDatabaseReference.child("searching").child(mUserID);
 
-        searchingref.addChildEventListener(new ChildEventListener() {
+        reftomyIDwhensearching.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -59,8 +59,9 @@ public class afterlogin extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(mUserID))
+                if(!dataSnapshot.hasChild(mUserID) && mLast)
                 {
+                    Log.i("Går in i mitt id",mUserID);
                     Intent intent = new Intent(afterlogin.this, MainActivity.class);
                     intent.putExtra("CHATID",mUserID);
                     startActivity(intent);
@@ -86,12 +87,12 @@ public class afterlogin extends AppCompatActivity {
                 //if(mFirebaseDatabaseReference.child("searching").removeValue() == null)
                 //{
                 //}
-                User viktorsbajsapa = new User(mUserID);
+                //User viktorsbajsapa = new User(mUserID);
                 //mFirebaseDatabaseReference.child("searching").setValue(viktorsbajsapa);
                 FriendlyMessage msg = new FriendlyMessage();
                 msg.setId("fdasf");
                 msg.setText("jfsdia");
-                mFirebaseDatabaseReference.child("searching").push().setValue(viktorsbajsapa);
+                //mFirebaseDatabaseReference.child("searching").push().setValue(viktorsbajsapa);
                 //mFirebaseDatabaseReference.child("searching").setValue(viktorsbajsapa);
                 searchingref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -99,7 +100,8 @@ public class afterlogin extends AppCompatActivity {
                         if(dataSnapshot.exists() == false) {
                             User viktorsbajsapa = new User();
                             viktorsbajsapa.setId(mUserID);
-                            mFirebaseDatabaseReference.child("searching").push().setValue(viktorsbajsapa);
+                            //mFirebaseDatabaseReference.child("searching").push().setValue(viktorsbajsapa);
+                            mFirebaseDatabaseReference.child("searching").child(mUserID).push().setValue(viktorsbajsapa);
                             Log.i("ID SOM SKRIVITS: ",viktorsbajsapa.getId());
                             //mFirebaseDatabaseReference.child("searching").child(mUserID).setValue(mUserID);
 
@@ -118,14 +120,20 @@ public class afterlogin extends AppCompatActivity {
                             lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot){
-                                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                                    User myObject = data.getValue(User.class);
-                                    MyChatpartnerID = myObject.getId();
-                                    FriendlyMessage msg = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
-                                    mFirebaseDatabaseReference.child("chats").child(MyChatpartnerID).child("messages").setValue(msg);
-                                    data.getRef().removeValue();
+                                    for (DataSnapshot data : dataSnapshot.getChildren())
+                                    {
+                                        User myObject = data.getValue(User.class);
+                                        MyChatpartnerID = myObject.getId();
+                                        FriendlyMessage msg = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
+                                        mFirebaseDatabaseReference.child("chats").child(MyChatpartnerID).child("messages").push().setValue(msg);
 
-                                }
+                                        mLast = false;
+
+                                        data.getRef().removeValue();
+
+                                    }
+
+                                    Log.i("Kommer detta köras?","...");
                                     Intent intent = new Intent(afterlogin.this, MainActivity.class);
                                     intent.putExtra("CHATID",MyChatpartnerID);
                                     startActivity(intent);
