@@ -120,24 +120,30 @@ public class afterlogin extends AppCompatActivity {
                             lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot){
+
                                     for (DataSnapshot data : dataSnapshot.getChildren())
                                     {
-                                        User myObject = data.getValue(User.class);
-                                        MyChatpartnerID = myObject.getId();
+                                        //User myObject = data.getValue(User.class);
+
+                                        //MyChatpartnerID = myObject.getId();
                                         FriendlyMessage msg = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
                                         mFirebaseDatabaseReference.child("chats").child(MyChatpartnerID).child("messages").push().setValue(msg);
 
-                                        mLast = false;
+                                        MyChatpartnerID = data.getKey();
 
-                                        data.getRef().removeValue();
+                                        mLast = false;
+                                        searchingref.child(MyChatpartnerID).removeValue();
+
+                                        //data.getRef().removeValue();
 
                                     }
 
-                                    Log.i("Kommer detta köras?","...");
+                                    Log.i("ID of partner",MyChatpartnerID);
                                     Intent intent = new Intent(afterlogin.this, MainActivity.class);
                                     intent.putExtra("CHATID",MyChatpartnerID);
                                     startActivity(intent);
                                     finish();
+
                                 }
 
                                 /*

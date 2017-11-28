@@ -207,10 +207,21 @@ public class MainActivity extends AppCompatActivity
         //userRef.removeValue();
             //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
         final DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages");
-
+        //FriendlyMessage friendlyMessage = new FriendlyMessage("aloha",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl(),mFirebaseUser);
         //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
+        FriendlyMessage mess = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
+        mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages").push().setValue(mess);
 
-
+        FriendlyMessage friendlyMessage = new
+                FriendlyMessage(mMessageEditText.getText().toString(),
+                mUsername,
+                mPhotoUrl,
+                null /* no image */);
+        messagesRef.push().setValue(friendlyMessage);
+        //mFirebaseDatabaseReference.child("chats").child("messages")
+        //        .push().setValue(friendlyMessage);
+        mMessageEditText.setText("");
+        userRef.removeValue();
 
         FirebaseRecyclerOptions<FriendlyMessage> options =
                 new FirebaseRecyclerOptions.Builder<FriendlyMessage>()
