@@ -15,6 +15,7 @@
  */
 package com.google.firebase.codelab.friendlychat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -63,6 +64,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -118,12 +120,14 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private static final String MESSAGE_URL = "http://friendlychat.firebase.google.com/message/";
 
+    private Button mExitButton;
     private Button mSendButton;
     private RecyclerView mMessageRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private ProgressBar mProgressBar;
     private EditText mMessageEditText;
     private ImageView mAddMessageImageView;
+    private boolean mLast = true;
 
     private User usr;
     // Firebase instance variables
@@ -148,6 +152,11 @@ public class MainActivity extends AppCompatActivity
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Set default username is anonymous.
         mUsername = ANONYMOUS;
+
+
+
+
+
 
 
         // Initialize Firebase Auth
@@ -209,19 +218,74 @@ public class MainActivity extends AppCompatActivity
         final DatabaseReference messagesRef = mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages");
         //FriendlyMessage friendlyMessage = new FriendlyMessage("aloha",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl(),mFirebaseUser);
         //DatabaseReference messagesRef = mFirebaseDatabaseReference.child("messages");
-        FriendlyMessage mess = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
-        mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages").push().setValue(mess);
+        //FriendlyMessage mess = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
+        //  mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).child("messages").push().setValue(mess);
 
+        messagesRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+
+                Context context = getApplicationContext();
+                CharSequence text = "Chatten har avslutats";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+
+
+                Intent exitIntent = new Intent(MainActivity.this, afterlogin.class);
+                startActivity(exitIntent);
+                finish();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        mExitButton = findViewById(R.id.button2);
+
+        mExitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                mFirebaseDatabaseReference.child("chats").child(getIntent().getStringExtra("CHATID")).removeValue();
+                Intent exitIntent = new Intent(MainActivity.this, afterlogin.class);
+                startActivity(exitIntent);
+                finish();
+            }
+        });
+
+        /*
         FriendlyMessage friendlyMessage = new
                 FriendlyMessage(mMessageEditText.getText().toString(),
                 mUsername,
                 mPhotoUrl,
-                null /* no image */);
+                null);
         messagesRef.push().setValue(friendlyMessage);
         //mFirebaseDatabaseReference.child("chats").child("messages")
         //        .push().setValue(friendlyMessage);
         mMessageEditText.setText("");
         userRef.removeValue();
+        */
 
         FirebaseRecyclerOptions<FriendlyMessage> options =
                 new FirebaseRecyclerOptions.Builder<FriendlyMessage>()

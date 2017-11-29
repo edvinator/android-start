@@ -126,14 +126,15 @@ public class afterlogin extends AppCompatActivity {
                                         //User myObject = data.getValue(User.class);
 
                                         //MyChatpartnerID = myObject.getId();
-                                        FriendlyMessage msg = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
-                                        mFirebaseDatabaseReference.child("chats").child(MyChatpartnerID).child("messages").push().setValue(msg);
+
 
                                         MyChatpartnerID = data.getKey();
+                                        //FriendlyMessage msg = new FriendlyMessage("HEJSVEJS",mFirebaseUser.getDisplayName(),mFirebaseUser.getPhotoUrl().toString(),mFirebaseUser.getPhotoUrl().toString());
+                                        //mFirebaseDatabaseReference.child("chats").child(MyChatpartnerID).child("messages").push().setValue(msg);
 
                                         mLast = false;
+                                        Log.i("ID of partner",MyChatpartnerID);
                                         searchingref.child(MyChatpartnerID).removeValue();
-
                                         //data.getRef().removeValue();
 
                                     }
